@@ -1,0 +1,12 @@
+#!/bin/sh
+
+fastboot flash bootloader bootloader-toro-primekk15.img
+fastboot reboot-bootloader
+sleep 5
+fastboot flash radio radio-toro-i515.ek02.img
+fastboot reboot-bootloader
+sleep 5
+fastboot flash radio-cdma radio-cdma-toro-i515.ek05.img
+fastboot reboot-bootloader
+sleep 5
+fastboot -w update image-mysid-icl53f.zip
