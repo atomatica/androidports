@@ -1,0 +1,85 @@
+
+project build/
+diff --git a/core/combo/HOST_linux-x86.mk b/core/combo/HOST_linux-x86.mk
+index 5ae4972..7df2893 100644
+--- a/core/combo/HOST_linux-x86.mk
++++ b/core/combo/HOST_linux-x86.mk
+@@ -53,6 +53,6 @@ HOST_GLOBAL_CFLAGS += \
+ 	-include $(call select-android-config-h,linux-x86)
+ 
+ # Disable new longjmp in glibc 2.11 and later. See bug 2967937.
+-HOST_GLOBAL_CFLAGS += -D_FORTIFY_SOURCE=0
++HOST_GLOBAL_CFLAGS += -U_FORTIFY_SOURCE -D_FORTIFY_SOURCE=0
+ 
+ HOST_NO_UNDEFINED_LDFLAGS := -Wl,--no-undefined
+
+project external/gtest/
+diff --git a/include/gtest/internal/gtest-param-util.h b/include/gtest/internal/gtest-param-util.h
+index 5559ab4..25fd238 100644
+--- a/include/gtest/internal/gtest-param-util.h
++++ b/include/gtest/internal/gtest-param-util.h
+@@ -48,6 +48,7 @@
+ 
+ #include <gtest/internal/gtest-linked_ptr.h>
+ #include <gtest/internal/gtest-internal.h>
++#include <stddef.h>
+ 
+ namespace testing {
+ namespace internal {
+
+project external/llvm/
+diff --git a/llvm-host-build.mk b/llvm-host-build.mk
+index 5219efd..53a6229 100644
+--- a/llvm-host-build.mk
++++ b/llvm-host-build.mk
+@@ -10,6 +10,8 @@ LOCAL_CFLAGS :=	\
+ 	-Wwrite-strings	\
+ 	$(LOCAL_CFLAGS)
+ 
++LOCAL_LDLIBS := -lpthread -ldl
++
+ ifeq ($(LLVM_ENABLE_ASSERTION),true)
+ LOCAL_CFLAGS :=	\
+ 	-D_DEBUG	\
+
+project external/mesa3d/
+diff --git a/src/glsl/linker.cpp b/src/glsl/linker.cpp
+index f8b6962..f31e5b5 100644
+--- a/src/glsl/linker.cpp
++++ b/src/glsl/linker.cpp
+@@ -67,6 +67,7 @@
+ #include <cstdio>
+ #include <cstdarg>
+ #include <climits>
++#include <stddef.h>
+ 
+ #include <pixelflinger2/pixelflinger2_interface.h>
+ 
+project external/oprofile/
+diff --git a/libpp/format_output.h b/libpp/format_output.h
+index b6c4592..8e527d5 100644
+--- a/libpp/format_output.h
++++ b/libpp/format_output.h
+@@ -91,7 +91,7 @@ protected:
+ 		symbol_entry const & symbol;
+ 		sample_entry const & sample;
+ 		size_t pclass;
+-		mutable counts_t & counts;
++		counts_t & counts;
+ 		extra_images const & extra;
+ 		double diff;
+ 	};
+
+project frameworks/compile/slang/
+diff --git a/slang_rs_export_foreach.cpp b/slang_rs_export_foreach.cpp
+index a4025ca..0dbf954 100644
+--- a/slang_rs_export_foreach.cpp
++++ b/slang_rs_export_foreach.cpp
+@@ -246,7 +246,6 @@ RSExportForEach *RSExportForEach::Create(RSContext *Context,
+                                     clang::SourceLocation(),
+                                     &Ctx.Idents.get(Id));
+ 
+-      llvm::StringRef ParamName = PVD->getName();
+       clang::FieldDecl *FD =
+           clang::FieldDecl::Create(Ctx,
+                                    RD,
